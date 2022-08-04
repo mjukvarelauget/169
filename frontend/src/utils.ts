@@ -6,8 +6,7 @@ interface PartyConfig {
   [key: string]: Party;
 }
 
-export type ElectionType = "st" | "kt"
-
+export type ElectionType = "st" | "kt";
 
 export enum Constituency {
   fi = "fi",
@@ -336,4 +335,136 @@ export const getSainteLaguesDividend = (n: number) => {
 
 export const sainte_lagues_method = (n: number) => {};
 
-export const backendUrl = `http://localhost:8080`
+export const backendUrl = `http://localhost:8080`;
+
+export interface ElectionResult {
+  id: Id;
+  tidspunkt: Tidspunkt;
+  merknader?: null[] | null;
+  antallsb: number;
+  mandater: Mandater;
+  stemmer: Stemmer;
+  stemmegiving: Stemmegiving;
+  frammote: Frammote;
+  opptalt: Opptalt;
+  prognose: Prognose;
+  partier: PartierEntity[];
+  _links: Links;
+}
+export interface Id {
+  valgaar: string;
+  valgtype: string;
+  nivaa: string;
+  navn: string;
+  nr: string;
+}
+export interface Tidspunkt {
+  rapportGenerert: string;
+  sisteStemmer: string;
+}
+export interface Mandater {
+  antall: number;
+  endring: number;
+}
+export interface Stemmer {
+  total: number;
+  fhs: number;
+  totalForkastede: number;
+  fhsForkastede: number;
+}
+export interface Stemmegiving {
+  totalGodkjente: number;
+  fhsGodkjente: number;
+  totalForkastede: number;
+  fhsForkastede: number;
+}
+export interface Frammote {
+  prosent: number;
+  endring: number;
+  prosentStemmegiving: number;
+}
+export interface Opptalt {
+  forelopigFhs: number;
+  forelopigVts: number;
+  forelopig: number;
+  endelig: number;
+  oppgjor: number;
+}
+export interface Prognose {
+  beregnet: boolean;
+  historiskTotalavvik?: null;
+}
+export interface PartierEntity {
+  id: Id1;
+  stemmer: Stemmer1;
+  mandater: Mandater1;
+}
+export interface Id1 {
+  partikategori: number;
+  partikode: string;
+  navn: string;
+}
+export interface Stemmer1 {
+  resultat: Resultat;
+}
+export interface Resultat {
+  prosent: number;
+  endring: Endring;
+  antall: Antall;
+}
+export interface Endring {
+  samme: number;
+  ekvivalent: number;
+}
+export interface Antall {
+  total: number;
+  fhs: number;
+}
+export interface Mandater1 {
+  resultat: Resultat1;
+}
+export interface Resultat1 {
+  antall: number;
+  endring: number;
+  utjevningAntall: number;
+  utjevning: Utjevning;
+}
+export interface Utjevning {
+  kvotient?: number | null;
+  mandatrang?: number | null;
+}
+export interface Links {
+  related?: RelatedEntity[] | null;
+  self: Self;
+  up: Up;
+}
+export interface RelatedEntity {
+  nr: string;
+  href: string;
+  hrefNavn: string;
+  navn: string;
+  forelopigFhs: number;
+  forelopigVts: number;
+  forelopig: number;
+  endelig: number;
+  oppgjor: number;
+  rapportGenerert: string;
+  harUnderordnet: boolean;
+}
+export interface Self {
+  nr: string;
+  href: string;
+  hrefNavn: string;
+  navn: string;
+  forelopigFhs: number;
+  forelopigVts: number;
+  forelopig: number;
+  endelig: number;
+  oppgjor: number;
+}
+export interface Up {
+  nr?: null;
+  href: string;
+  hrefNavn: string;
+  navn?: null;
+}

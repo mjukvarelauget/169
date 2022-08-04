@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "react-query";
-import { backendUrl, ElectionType, getPartyColor } from "../utils";
+import { backendUrl, ElectionResult, ElectionType, getPartyColor } from "../utils";
 
 const useElectionData = (
   electionType: ElectionType,
@@ -11,12 +11,16 @@ const useElectionData = (
     const response = await fetch(
       `${backendUrl}/${electionType}/${year}/${county}`
     );
-    console.log(response);
-
     const json = await response.json();
-    console.log(json);
-
     return json;
+  });
+};
+
+export const useGetNationalElection = () => {
+  return useQuery(["national", {}], async () => {
+    const response = await fetch(`${backendUrl}/st/2021`);
+    const json = await response.json() as ElectionResult;
+    return json 
   });
 };
 
@@ -65,7 +69,7 @@ interface Dot {
   partyId: string;
   count: number;
 }
-const ColoredDots: React.FC<Dot> = (props) => {
+export const ColoredDots: React.FC<Dot> = (props) => {
   const arr = new Array(props.count).fill("b").map((_, i) => (
     <div
       key={i}

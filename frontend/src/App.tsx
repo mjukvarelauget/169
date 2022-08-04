@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { Assembly } from "./components/Assembly";
 import { Dots } from "./components/Dots";
 import { InteractiveMap } from "./components/InteractiveMap";
+import { Parliment } from "./components/Parliament/Parliament";
 import { ElectionType } from "./utils";
 
 const queryClient = new QueryClient();
@@ -15,8 +17,10 @@ function App() {
       <div>
         Dette er en valg
         <div>
-          <InteractiveMap onChangeCounty={setCounty} />
+          <Parliment />
+          {/* <InteractiveMap onChangeCounty={setCounty} />
           <Dots year={year} county={county} electionType={electionType} />
+          <Assembly /> */}
         </div>
       </div>
     </QueryClientProvider>
