@@ -1,10 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { select } from "d3-selection";
 import { pc } from "./parliament-chart";
 import { useGetNationalElection } from "../Dots";
 import { getPartyColor, partyOrder } from "../../utils";
 
-export const Parliment: React.FC<{}> = (props) => {
+export const Parliment: React.FC = () => {
   const width = 860;
   const seatRadius = 12;
   const rowHeight = 42;
@@ -18,6 +18,8 @@ export const Parliment: React.FC<{}> = (props) => {
   const partiesWithMandates = data?.partier.filter(
     (party) => party.mandater.resultat.antall > 0
   );
+
+  const [hoveredId, setHoveredId] = useState<string | null>();
 
   const inputData = partiesWithMandates
     ?.map((party) => ({
@@ -46,14 +48,18 @@ export const Parliment: React.FC<{}> = (props) => {
             sectionGap,
           },
           debug,
+          onHover: setHoveredId,
         })
       );
     }
-  }, [svgRef, inputData]);
+  }, [svgRef, inputData, debug]);
 
   return isLoading ? (
     <>Laster...</>
   ) : (
-    <svg ref={svgRef} width={width} height={1200} id="the child"></svg>
+    <>
+      <p>{hoveredId}</p>
+      <svg ref={svgRef} width={width} height={1200} id="the child" />
+    </>
   );
 };

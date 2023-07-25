@@ -32,25 +32,52 @@ interface Props {
   width: number;
   options: Options;
   debug: boolean;
+  onHover: (id: string) => void;
 }
 
-export const pc = ({ data, width, options, debug }: Props) => {
+const populateUtjevning = (rawData: DataPoint[], data: InputData[]) => {
+  let currentParyId = data[0].partiKode;
+  let utjevningCounter = 0;
+  const returnData: DataPoint[] = [];
+  for (let i = 0; i < rawData.length; i++) {
+    const mandate = rawData[i];
+    const partyData = data.find(
+      (party) => party.partiKode === mandate.partiKode
+    );
+
+    if (partyData!.partiKode !== currentParyId) {
+      currentParyId = partyData!.partiKode;
+      utjevningCounter = 0;
+    }
+
+    returnData.push({
+      ...mandate,
+      isUtjevning: utjevningCounter < partyData!.utjevning,
+    });
+
+    utjevningCounter++;
+  }
+  return returnData;
+};
+
+export const pc = ({ data, width, options, debug, onHover }: Props) => {
   let graphicWidth = width;
 
   // clean out any x and y values provided in data objects.
-  let rawData: DataPoint[] = [...data]
-    .map((party) =>
-      new Array(party.seats).fill({
-        x: 0,
-        y: 0,
-        color: party.color,
-        partiKode: party.partiKode,
-        isUtjevning: false,
-      } as DataPoint)
-    )
-    .flat();
-
-  console.log(rawData);
+  let rawData: DataPoint[] = populateUtjevning(
+    [...data]
+      .map((party) =>
+        new Array(party.seats).fill({
+          x: 0,
+          y: 0,
+          color: party.color,
+          partiKode: party.partiKode,
+          isUtjevning: false,
+        } as DataPoint)
+      )
+      .flat(),
+    data
+  );
 
   getParliamentPoints(rawData.length, options, graphicWidth).forEach(
     (coords, i) => (rawData[i] = { ...rawData[i], ...coords })
@@ -92,7 +119,24 @@ export const pc = ({ data, width, options, debug }: Props) => {
       .attr("cx", (d) => d.x)
       .attr("cy", (d) => d.y)
       .attr("r", options.seatRadius)
-      .attr("fill", (d) => d.color || "#AAA");
+      .attr("stroke", "black")
+      .attr("id", (d, i) => {
+        const party = data.find((p, i) => p.partiKode === d.partiKode);
+        return `${party!.partiKode}_${i}`;
+      })
+      .attr("stroke-width", (d) => (d.isUtjevning ? 1 : 0))
+      .attr("fill", (d) => d.color || "#AAA")
+      .attr("party", (d) => d.partiKode)
+      .on("mouseover", (e, d) => {
+        innerSelection
+          .selectAll(`circle[party='${d.partiKode}']`)
+          .attr("fill", "black");
+      })
+      .on("mouseout", (e, d) => {
+        innerSelection
+          .selectAll(`circle[party='${d.partiKode}']`)
+          .attr("fill", d.color);
+      });
   };
 
   parliamentChart.width = (w: number) => {
@@ -141,7 +185,6 @@ export const pc = ({ data, width, options, debug }: Props) => {
       (coords, i) => (rawData[i] = { ...rawData[i], ...coords })
     );
 
-    // return the data
     return rawData;
   };
 

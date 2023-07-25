@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { Assembly } from "./components/Assembly";
 import { Dots } from "./components/Dots";
 import { InteractiveMap } from "./components/InteractiveMap";
 import { Parliment } from "./components/Parliament/Parliament";
@@ -12,15 +11,15 @@ function App() {
   const year = 2021;
   const electionType: ElectionType = "st";
   const [county, setCounty] = useState<string>("akershus");
+
   return (
     <QueryClientProvider client={queryClient}>
       <div>
         Dette er en valg
         <div>
-          <Parliment />
-          {/* <InteractiveMap onChangeCounty={setCounty} />
+          <InteractiveMap onChangeCounty={setCounty} />
           <Dots year={year} county={county} electionType={electionType} />
-          <Assembly /> */}
+          <Parliment />
         </div>
       </div>
     </QueryClientProvider>
